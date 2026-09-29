@@ -2,49 +2,261 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
 <title>Статус рейса</title>
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:transparent;overflow:hidden}
-#widget{position:relative;width:100%;height:100%;overflow:hidden;border-radius:16px;background:#111;
-font-family:Arial,sans-serif;user-select:none;-webkit-user-select:none;box-shadow:0 3px 14px rgba(0,0,0,.35)}
-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;background:#111}
-.top,.status{position:absolute;top:8px;z-index:3;padding:5px 9px;border-radius:8px;background:rgba(0,0,0,.62);
-color:#fff;font-size:12px;font-weight:800;letter-spacing:.4px;text-shadow:0 1px 2px #000}
-.top{left:10px}.status{right:10px}
-#hint{position:absolute;left:50%;bottom:7px;transform:translateX(-50%);z-index:4;color:rgba(255,255,255,.78);
-font-size:9px;white-space:nowrap;opacity:0;transition:opacity .25s;text-shadow:0 1px 2px #000}
-</style></head>
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: transparent;
+  overflow: hidden;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 5px;
+}
+
+#widget {
+  position: relative;
+  width: 350px;
+  max-width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 16px;
+  background: #111;
+  font-family: Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  box-shadow: 0 3px 14px rgba(0,0,0,.35);
+}
+
+video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #111;
+}
+
+.top,
+.status {
+  position: absolute;
+  top: 8px;
+  z-index: 3;
+  padding: 5px 9px;
+  border-radius: 8px;
+  background: rgba(0,0,0,.62);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .4px;
+  text-shadow: 0 1px 2px #000;
+}
+
+.top {
+  left: 10px;
+}
+
+.status {
+  right: 10px;
+}
+
+#hint {
+  position: absolute;
+  left: 50%;
+  bottom: 7px;
+  transform: translateX(-50%);
+  z-index: 4;
+  color: rgba(255,255,255,.8);
+  font-size: 9px;
+  white-space: nowrap;
+  opacity: 0;
+  text-shadow: 0 1px 2px #000;
+}
+</style>
+</head>
+
 <body>
+
 <div id="widget">
-<video id="video" autoplay muted playsinline preload="auto"></video>
-<div class="top" id="trip">РЕЙС №1</div>
-<div class="status" id="status">ЗАГРУЗКА</div>
-<div id="hint">Двойной тап — следующий этап</div>
+
+  <video
+    id="video"
+    autoplay
+    muted
+    playsinline
+    preload="auto">
+  </video>
+
+  <div class="top" id="trip">
+    РЕЙС №1
+  </div>
+
+  <div class="status" id="status">
+    ЗАГРУЗКА
+  </div>
+
+  <div id="hint">
+    Двойной тап — следующий этап
+  </div>
+
 </div>
+
 <script>
-const states=[
-{name:"ЗАГРУЗКА",file:"loading.mp4"},
-{name:"В ПУТИ",file:"full.mp4"},
-{name:"РАЗГРУЗКА",file:"unloading.mp4"},
-{name:"В ПУТИ",file:"empty.mp4"}
+
+const states = [
+  {
+    name: "ЗАГРУЗКА",
+    file: "loading.mp4"
+  },
+  {
+    name: "В ПУТИ",
+    file: "full.mp4"
+  },
+  {
+    name: "РАЗГРУЗКА",
+    file: "unloading.mp4"
+  },
+  {
+    name: "В ПУТИ",
+    file: "empty.mp4"
+  }
 ];
-let current=0,lastTap=0;
-const video=document.getElementById("video"),trip=document.getElementById("trip"),
-status=document.getElementById("status"),hint=document.getElementById("hint");
-function getTrip(){
- try{const d=JSON.parse(localStorage.getItem("dumptruck_shift_v4")||"{}");
- return Math.max(1,Number(d.trips||0)+1)}catch(e){return 1}
+
+let current = 0;
+let lastTap = 0;
+
+const video = document.getElementById("video");
+const trip = document.getElementById("trip");
+const status = document.getElementById("status");
+const hint = document.getElementById("hint");
+
+function getTrip() {
+
+  try {
+
+    const data = JSON.parse(
+      localStorage.getItem("dumptruck_shift_v4") || "{}"
+    );
+
+    return Math.max(
+      1,
+      Number(data.trips || 0) + 1
+    );
+
+  } catch(e) {
+
+    return 1;
+
+  }
+
 }
-function updateTrip(){trip.textContent="РЕЙС №"+getTrip()}
-function show(i){
- current=i%states.length; const s=states[current]; status.textContent=s.name;
- video.src=s.file; video.currentTime=0; video.load(); const p=video.play(); if(p)p.catch(()=>{});
+
+function updateTrip() {
+
+  trip.textContent =
+    "РЕЙС №" + getTrip();
+
 }
-function next(){show((current+1)%states.length);hint.style.opacity="1";setTimeout(()=>hint.style.opacity="0",900)}
-function tap(){const now=Date.now();if(now-lastTap<450){lastTap=0;next()}else lastTap=now}
-document.getElementById("widget").addEventListener("click",tap);
-document.getElementById("widget").addEventListener("touchend",e=>{e.preventDefault();tap()},{passive:false});
-updateTrip();show(0);setInterval(updateTrip,1000);window.addEventListener("storage",updateTrip);
+
+function showState(number) {
+
+  current = number % states.length;
+
+  const state = states[current];
+
+  status.textContent = state.name;
+
+  video.src = state.file;
+
+  video.currentTime = 0;
+
+  video.load();
+
+  const playPromise = video.play();
+
+  if (playPromise) {
+    playPromise.catch(() => {});
+  }
+
+}
+
+function nextState() {
+
+  showState(current + 1);
+
+  hint.style.opacity = "1";
+
+  setTimeout(() => {
+    hint.style.opacity = "0";
+  }, 900);
+
+}
+
+function handleTap() {
+
+  const now = Date.now();
+
+  if (now - lastTap < 450) {
+
+    lastTap = 0;
+
+    nextState();
+
+  } else {
+
+    lastTap = now;
+
+  }
+
+}
+
+const widget = document.getElementById("widget");
+
+widget.addEventListener(
+  "click",
+  handleTap
+);
+
+widget.addEventListener(
+  "touchend",
+  function(e) {
+
+    e.preventDefault();
+
+    handleTap();
+
+  },
+  { passive: false }
+);
+
+updateTrip();
+
+showState(0);
+
+setInterval(
+  updateTrip,
+  1000
+);
+
+window.addEventListener(
+  "storage",
+  updateTrip
+);
+
 </script>
-</body></html>
+
+</body>
+</html>
