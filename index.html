@@ -2,47 +2,522 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
 <style>
-*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:-apple-system,BlinkMacSystemFont,Arial}
-.w{width:350px;height:88px;padding:9px 12px;color:#fff;background:rgba(17,20,22,.93);border:1px solid #303638;border-radius:13px;box-shadow:0 6px 22px #0005}
-.head{height:20px;display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:800;letter-spacing:1px;color:#dce3e5}
-.dot{display:inline-block;width:7px;height:7px;background:#45df78;border-radius:50%;margin-right:7px;box-shadow:0 0 8px #45df78}
-.truck{font-size:17px;cursor:pointer}
-.stats{display:grid;grid-template-columns:1.45fr .8fr .95fr;gap:8px;margin-top:5px}
-.lab{font-size:8px;color:#899497;text-transform:uppercase}.val{font-size:16px;font-weight:800;line-height:19px}.money{font-size:18px}
-.panel{display:none;position:absolute;top:0;left:0;width:350px;height:88px;padding:10px 12px;background:#101315;border-radius:13px}
-.panel.on{display:block}.title{font-size:10px;font-weight:800;margin-bottom:8px}
-input{width:210px;height:36px;background:#252b2e;border:1px solid #414a4d;border-radius:9px;color:white;font-size:17px;font-weight:800;padding:0 9px}
-button{height:36px;border:0;border-radius:9px;padding:0 11px;font-weight:800;background:#e5b83e;color:#111}.close{background:#343b3e;color:white;margin-left:4px}
-.toast{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);background:#202527;padding:6px 10px;border-radius:7px;font-size:9px;opacity:0}
-.show{opacity:1}
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:transparent;
+  font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif
+}
+
+.w{
+  position:relative;
+  width:350px;
+  height:88px;
+  padding:9px 12px;
+  color:#fff;
+  background:rgba(17,20,22,.94);
+  border:1px solid #303638;
+  border-radius:13px;
+  box-shadow:0 6px 22px #0005
+}
+
+.head{
+  height:20px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1px;
+  color:#dce3e5
+}
+
+.dot{
+  display:inline-block;
+  width:7px;
+  height:7px;
+  background:#45df78;
+  border-radius:50%;
+  margin-right:7px;
+  box-shadow:0 0 8px #45df78
+}
+
+.dot.off{
+  background:#8a9396;
+  box-shadow:none
+}
+
+.truck{
+  font-size:17px;
+  cursor:pointer
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:1.45fr .8fr .95fr;
+  gap:8px;
+  margin-top:5px
+}
+
+.lab{
+  font-size:8px;
+  color:#899497;
+  text-transform:uppercase
+}
+
+.val{
+  font-size:16px;
+  font-weight:800;
+  line-height:19px
+}
+
+.money{
+  font-size:18px
+}
+
+.panel{
+  display:none;
+  position:absolute;
+  z-index:10;
+  top:0;
+  left:0;
+  width:350px;
+  height:88px;
+  padding:8px 10px;
+  background:#101315;
+  border-radius:13px
+}
+
+.panel.on{
+  display:block
+}
+
+.title{
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:.5px;
+  margin-bottom:5px;
+  color:#dce3e5
+}
+
+.row{
+  display:flex;
+  gap:5px;
+  align-items:center
+}
+
+button{
+  height:27px;
+  border:0;
+  border-radius:7px;
+  padding:0 8px;
+  font-size:9px;
+  font-weight:800;
+  color:#111;
+  background:#e5b83e
+}
+
+.green{
+  background:#45df78
+}
+
+.gray{
+  background:#343b3e;
+  color:#fff
+}
+
+.red{
+  background:#bd5454;
+  color:#fff
+}
+
+input{
+  width:70px;
+  height:27px;
+  background:#252b2e;
+  border:1px solid #414a4d;
+  border-radius:7px;
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  padding:0 7px
+}
+
+.close{
+  margin-left:auto
+}
+
+.toast{
+  position:absolute;
+  z-index:20;
+  bottom:5px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#202527;
+  padding:6px 10px;
+  border-radius:7px;
+  font-size:9px;
+  opacity:0;
+  pointer-events:none;
+  white-space:nowrap
+}
+
+.show{
+  opacity:1
+}
 </style>
 </head>
+
 <body>
+
 <div class="w" id="w">
-<div class="head"><span><i class="dot"></i>СМЕНА В РАБОТЕ</span><span class="truck" id="set">🚛</span></div>
-<div class="stats">
-<div><div class="lab">Заработано</div><div class="val money" id="sum">0 ₽</div></div>
-<div><div class="lab">Рейсов</div><div class="val" id="trips">0</div></div>
-<div><div class="lab">Время</div><div class="val" id="time">00:00</div></div>
+
+  <div class="head">
+    <span>
+      <i class="dot" id="dot"></i>
+      <span id="status">СМЕНА НЕ ЗАПУЩЕНА</span>
+    </span>
+
+    <span class="truck" id="set">🚛</span>
+  </div>
+
+  <div class="stats">
+
+    <div>
+      <div class="lab">Заработано</div>
+      <div class="val money" id="sum">0 ₽</div>
+    </div>
+
+    <div>
+      <div class="lab">Рейсов</div>
+      <div class="val" id="trips">0</div>
+    </div>
+
+    <div>
+      <div class="lab">Время</div>
+      <div class="val" id="time">00:00</div>
+    </div>
+
+  </div>
+
+
+  <div class="panel" id="p">
+
+    <div class="title">УПРАВЛЕНИЕ СМЕНОЙ</div>
+
+    <div class="row">
+
+      <button class="green" id="start">
+        ▶ СТАРТ
+      </button>
+
+      <button class="gray" id="pause">
+        Ⅱ ПАУЗА
+      </button>
+
+      <button id="trip">
+        + РЕЙС
+      </button>
+
+      <input
+        id="price"
+        type="number"
+        inputmode="numeric"
+        min="0"
+        step="50"
+        placeholder="₽/рейс"
+      >
+
+      <button id="save">
+        OK
+      </button>
+
+      <button class="red" id="reset">
+        НОВАЯ
+      </button>
+
+      <button class="gray close" id="close">
+        ×
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="toast" id="toast"></div>
+
 </div>
-<div class="panel" id="p"><div class="title">СТОИМОСТЬ ОДНОГО РЕЙСА</div>
-<input id="price" type="number" inputmode="numeric" placeholder="Цена, ₽">
-<button id="save">Сохранить</button><button class="close" id="close">×</button></div>
-<div class="toast" id="toast"></div>
-</div>
+
+
 <script>
-let s=JSON.parse(localStorage.getItem("dump")||"null")||{price:5000,trips:0,start:Date.now()};
-const $=x=>document.getElementById(x);
-function save(){localStorage.setItem("dump",JSON.stringify(s))}
-function show(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1000)}
-function render(){ $("sum").textContent=(s.price*s.trips).toLocaleString("ru-RU")+" ₽";$("trips").textContent=s.trips;let x=Math.floor((Date.now()-s.start)/1000);$("time").textContent=String(Math.floor(x/3600)).padStart(2,"0")+":"+String(Math.floor(x%3600/60)).padStart(2,"0")}
-$("set").onclick=()=>{$("p").classList.add("on");$("price").value=s.price;$("price").focus()}
-$("close").onclick=()=>$("p").classList.remove("on")
-$("save").onclick=()=>{s.price=Math.max(0,+$("price").value||0);save();$("p").classList.remove("on");show("Цена сохранена");render()}
-let tap=0;$("w").onclick=e=>{if(e.target.closest(".panel,.truck"))return;let n=Date.now();if(n-tap<400){s.trips++;save();render();show("+1 рейс");}tap=n}
-render();setInterval(render,1000)
+
+const KEY = "dumptruck_shift_v4";
+
+
+let s = JSON.parse(localStorage.getItem(KEY) || "null");
+
+
+if(!s){
+
+  s = {
+    price:5000,
+    trips:0,
+    startedAt:null,
+    elapsed:0,
+    running:false
+  };
+
+  localStorage.setItem(KEY,JSON.stringify(s));
+}
+
+
+const $ = id => document.getElementById(id);
+
+
+function save(){
+
+  localStorage.setItem(KEY,JSON.stringify(s));
+
+}
+
+
+function getElapsed(){
+
+  if(!s.startedAt){
+
+    return s.elapsed || 0;
+
+  }
+
+  if(s.running){
+
+    return (s.elapsed || 0) + (Date.now() - s.startedAt);
+
+  }
+
+  return s.elapsed || 0;
+
+}
+
+
+function formatMoney(n){
+
+  return Math.round(n).toLocaleString("ru-RU") + " ₽";
+
+}
+
+
+function render(){
+
+  const total = s.price * s.trips;
+
+  $("sum").textContent = formatMoney(total);
+
+  $("trips").textContent = s.trips;
+
+
+  const seconds = Math.floor(getElapsed()/1000);
+
+  const hours = Math.floor(seconds/3600);
+
+  const minutes = Math.floor((seconds%3600)/60);
+
+
+  $("time").textContent =
+    String(hours).padStart(2,"0") +
+    ":" +
+    String(minutes).padStart(2,"0");
+
+
+  if(s.running){
+
+    $("status").textContent = "СМЕНА В РАБОТЕ";
+
+    $("dot").classList.remove("off");
+
+  }else if(s.startedAt || s.elapsed){
+
+    $("status").textContent = "СМЕНА НА ПАУЗЕ";
+
+    $("dot").classList.add("off");
+
+  }else{
+
+    $("status").textContent = "СМЕНА НЕ ЗАПУЩЕНА";
+
+    $("dot").classList.add("off");
+
+  }
+
+}
+
+
+function toast(text){
+
+  $("toast").textContent = text;
+
+  $("toast").classList.add("show");
+
+  setTimeout(function(){
+
+    $("toast").classList.remove("show");
+
+  },1100);
+
+}
+
+
+/* Открыть управление */
+
+$("set").onclick = function(){
+
+  $("p").classList.add("on");
+
+  $("price").value = s.price;
+
+};
+
+
+/* Закрыть управление */
+
+$("close").onclick = function(){
+
+  $("p").classList.remove("on");
+
+};
+
+
+/* СТАРТ */
+
+$("start").onclick = function(){
+
+  if(!s.running){
+
+    s.startedAt = Date.now();
+
+    s.running = true;
+
+    save();
+
+    render();
+
+    toast("СМЕНА ЗАПУЩЕНА");
+
+  }
+
+};
+
+
+/* ПАУЗА */
+
+$("pause").onclick = function(){
+
+  if(s.running){
+
+    s.elapsed = getElapsed();
+
+    s.startedAt = null;
+
+    s.running = false;
+
+    save();
+
+    render();
+
+    toast("СМЕНА НА ПАУЗЕ");
+
+  }
+
+};
+
+
+/* ДОБАВИТЬ РЕЙС */
+
+$("trip").onclick = function(){
+
+  s.trips++;
+
+  save();
+
+  render();
+
+  toast("+1 РЕЙС  " + formatMoney(s.price));
+
+};
+
+
+/* Сохранить цену */
+
+$("save").onclick = function(){
+
+  const value = Number($("price").value);
+
+  if(!isNaN(value) && value >= 0){
+
+    s.price = value;
+
+  }
+
+  save();
+
+  render();
+
+  toast("ЦЕНА: " + formatMoney(s.price));
+
+};
+
+
+/* НОВАЯ СМЕНА */
+
+$("reset").onclick = function(){
+
+  const ok = confirm(
+    "Начать новую смену?\n\n" +
+    "Рейсы, заработок и время будут сброшены."
+  );
+
+  if(!ok) return;
+
+
+  s = {
+
+    price:s.price,
+
+    trips:0,
+
+    startedAt:null,
+
+    elapsed:0,
+
+    running:false
+
+  };
+
+
+  save();
+
+  render();
+
+  toast("НОВАЯ СМЕНА");
+
+};
+
+
+/* Обновляем время каждую секунду */
+
+render();
+
+setInterval(render,1000);
+
 </script>
+
 </body>
 </html>
