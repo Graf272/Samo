@@ -1,3 +1,48 @@
-<!doctype html><html lang="ru"><meta charset="utf-8"><style>
-*{box-sizing:border-box}html,body{margin:0;background:transparent;overflow:hidden;font-family:Arial,sans-serif}.w{width:350px;height:88px;border-radius:18px;background:rgba(8,12,11,.92);color:#fff;border:1px solid #ffffff17;box-shadow:0 9px 30px #0008;padding:9px 12px}.head{display:flex;align-items:center}.dot{width:9px;height:9px;border-radius:50%;background:#27df77;box-shadow:0 0 10px #27df77;margin-right:7px}.live{font-size:9px;letter-spacing:1.4px;color:#7f8b86}.truck{margin-left:auto;font-size:18px}.grid{display:grid;grid-template-columns:1.3fr 1fr 1fr;margin-top:8px}.box{border-right:1px solid #ffffff14;padding:0 10px}.box:first-child{padding-left:0}.box:last-child{border:0}.label{font-size:8px;color:#7f8985;text-transform:uppercase;letter-spacing:.7px}.value{font-size:20px;font-weight:800;margin-top:2px}.green{color:#32e27d}
-</style><div class=w><div class=head><span class=dot></span><span class=live>СМЕНА В РАБОТЕ</span><span class=truck>🚛</span></div><div class=grid><div class=box><div class=label>Заработано</div><div class="value green">12 450 ₽</div></div><div class=box><div class=label>Рейсов</div><div class=value>24</div></div><div class=box><div class=label>Время</div><div class=value>08:42</div></div></div></div></html>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;overflow:hidden;background:transparent;font-family:-apple-system,BlinkMacSystemFont,Arial}
+.w{width:350px;height:88px;padding:9px 12px;color:#fff;background:rgba(17,20,22,.93);border:1px solid #303638;border-radius:13px;box-shadow:0 6px 22px #0005}
+.head{height:20px;display:flex;justify-content:space-between;align-items:center;font-size:9px;font-weight:800;letter-spacing:1px;color:#dce3e5}
+.dot{display:inline-block;width:7px;height:7px;background:#45df78;border-radius:50%;margin-right:7px;box-shadow:0 0 8px #45df78}
+.truck{font-size:17px;cursor:pointer}
+.stats{display:grid;grid-template-columns:1.45fr .8fr .95fr;gap:8px;margin-top:5px}
+.lab{font-size:8px;color:#899497;text-transform:uppercase}.val{font-size:16px;font-weight:800;line-height:19px}.money{font-size:18px}
+.panel{display:none;position:absolute;top:0;left:0;width:350px;height:88px;padding:10px 12px;background:#101315;border-radius:13px}
+.panel.on{display:block}.title{font-size:10px;font-weight:800;margin-bottom:8px}
+input{width:210px;height:36px;background:#252b2e;border:1px solid #414a4d;border-radius:9px;color:white;font-size:17px;font-weight:800;padding:0 9px}
+button{height:36px;border:0;border-radius:9px;padding:0 11px;font-weight:800;background:#e5b83e;color:#111}.close{background:#343b3e;color:white;margin-left:4px}
+.toast{position:absolute;bottom:5px;left:50%;transform:translateX(-50%);background:#202527;padding:6px 10px;border-radius:7px;font-size:9px;opacity:0}
+.show{opacity:1}
+</style>
+</head>
+<body>
+<div class="w" id="w">
+<div class="head"><span><i class="dot"></i>СМЕНА В РАБОТЕ</span><span class="truck" id="set">🚛</span></div>
+<div class="stats">
+<div><div class="lab">Заработано</div><div class="val money" id="sum">0 ₽</div></div>
+<div><div class="lab">Рейсов</div><div class="val" id="trips">0</div></div>
+<div><div class="lab">Время</div><div class="val" id="time">00:00</div></div>
+</div>
+<div class="panel" id="p"><div class="title">СТОИМОСТЬ ОДНОГО РЕЙСА</div>
+<input id="price" type="number" inputmode="numeric" placeholder="Цена, ₽">
+<button id="save">Сохранить</button><button class="close" id="close">×</button></div>
+<div class="toast" id="toast"></div>
+</div>
+<script>
+let s=JSON.parse(localStorage.getItem("dump")||"null")||{price:5000,trips:0,start:Date.now()};
+const $=x=>document.getElementById(x);
+function save(){localStorage.setItem("dump",JSON.stringify(s))}
+function show(t){$("toast").textContent=t;$("toast").classList.add("show");setTimeout(()=>$("toast").classList.remove("show"),1000)}
+function render(){ $("sum").textContent=(s.price*s.trips).toLocaleString("ru-RU")+" ₽";$("trips").textContent=s.trips;let x=Math.floor((Date.now()-s.start)/1000);$("time").textContent=String(Math.floor(x/3600)).padStart(2,"0")+":"+String(Math.floor(x%3600/60)).padStart(2,"0")}
+$("set").onclick=()=>{$("p").classList.add("on");$("price").value=s.price;$("price").focus()}
+$("close").onclick=()=>$("p").classList.remove("on")
+$("save").onclick=()=>{s.price=Math.max(0,+$("price").value||0);save();$("p").classList.remove("on");show("Цена сохранена");render()}
+let tap=0;$("w").onclick=e=>{if(e.target.closest(".panel,.truck"))return;let n=Date.now();if(n-tap<400){s.trips++;save();render();show("+1 рейс");}tap=n}
+render();setInterval(render,1000)
+</script>
+</body>
+</html>
