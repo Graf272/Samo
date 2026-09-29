@@ -202,11 +202,10 @@ input{
 
     <div>
       <div class="lab">Время</div>
-      <div class="val" id="time">00:00</div>
+      <div class="val" id="time">00:00:00</div>
     </div>
 
   </div>
-
 
   <div class="panel" id="p">
 
@@ -251,7 +250,6 @@ input{
 
   </div>
 
-
   <div class="toast" id="toast"></div>
 
 </div>
@@ -261,9 +259,7 @@ input{
 
 const KEY = "dumptruck_shift_v4";
 
-
 let s = JSON.parse(localStorage.getItem(KEY) || "null");
-
 
 if(!s){
 
@@ -277,7 +273,6 @@ if(!s){
 
   localStorage.setItem(KEY,JSON.stringify(s));
 }
-
 
 const $ = id => document.getElementById(id);
 
@@ -330,11 +325,15 @@ function render(){
 
   const minutes = Math.floor((seconds%3600)/60);
 
+  const secs = seconds % 60;
+
 
   $("time").textContent =
     String(hours).padStart(2,"0") +
     ":" +
-    String(minutes).padStart(2,"0");
+    String(minutes).padStart(2,"0") +
+    ":" +
+    String(secs).padStart(2,"0");
 
 
   if(s.running){
@@ -509,6 +508,37 @@ $("reset").onclick = function(){
   toast("НОВАЯ СМЕНА");
 
 };
+
+
+/* Двойной тап по основному виджету = добавить 1 рейс */
+
+let lastTap = 0;
+
+$("w").addEventListener("click", function(e){
+
+  if(e.target.closest("#set") || e.target.closest("#p")){
+
+    return;
+
+  }
+
+  const t = Date.now();
+
+  if(t - lastTap < 450){
+
+    s.trips++;
+
+    save();
+
+    render();
+
+    toast("+1 РЕЙС  " + formatMoney(s.price));
+
+  }
+
+  lastTap = t;
+
+});
 
 
 /* Обновляем время каждую секунду */
