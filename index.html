@@ -2,10 +2,15 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+
+<meta name="viewport"
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 html,body{
   margin:0;
@@ -13,7 +18,7 @@ html,body{
   height:100%;
   overflow:hidden;
   background:transparent;
-  font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif
+  font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;
 }
 
 .w{
@@ -21,156 +26,221 @@ html,body{
   width:350px;
   height:88px;
   padding:9px 12px;
+
   color:#fff;
+
   background:rgba(17,20,22,.94);
+
   border:1px solid #303638;
+
   border-radius:13px;
-  box-shadow:0 6px 22px #0005
+
+  box-shadow:0 6px 22px #0005;
 }
 
 .head{
   height:20px;
+
   display:flex;
   justify-content:space-between;
   align-items:center;
+
   font-size:9px;
   font-weight:800;
   letter-spacing:1px;
-  color:#dce3e5
+
+  color:#dce3e5;
 }
 
 .dot{
   display:inline-block;
+
   width:7px;
   height:7px;
+
   background:#45df78;
+
   border-radius:50%;
+
   margin-right:7px;
-  box-shadow:0 0 8px #45df78
+
+  box-shadow:0 0 8px #45df78;
 }
 
 .dot.off{
   background:#8a9396;
-  box-shadow:none
+  box-shadow:none;
 }
 
 .truck{
   font-size:17px;
-  cursor:pointer
+  cursor:pointer;
 }
 
 .stats{
   display:grid;
+
   grid-template-columns:1.45fr .8fr .95fr;
+
   gap:8px;
-  margin-top:5px
+
+  margin-top:5px;
 }
 
 .lab{
   font-size:8px;
+
   color:#899497;
-  text-transform:uppercase
+
+  text-transform:uppercase;
 }
 
 .val{
   font-size:16px;
+
   font-weight:800;
-  line-height:19px
+
+  line-height:19px;
 }
 
 .money{
-  font-size:18px
+  font-size:18px;
 }
 
 .panel{
   display:none;
+
   position:absolute;
+
   z-index:10;
+
   top:0;
   left:0;
+
   width:350px;
   height:88px;
+
   padding:8px 10px;
+
   background:#101315;
-  border-radius:13px
+
+  border-radius:13px;
 }
 
 .panel.on{
-  display:block
+  display:block;
 }
 
 .title{
   font-size:9px;
+
   font-weight:800;
+
   letter-spacing:.5px;
+
   margin-bottom:5px;
-  color:#dce3e5
+
+  color:#dce3e5;
 }
 
 .row{
   display:flex;
-  gap:5px
+
+  gap:5px;
+
+  align-items:center;
 }
 
 button{
   height:27px;
+
   border:0;
+
   border-radius:7px;
+
   padding:0 8px;
+
   font-size:9px;
+
   font-weight:800;
+
   color:#111;
-  background:#e5b83e
+
+  background:#e5b83e;
+
+  white-space:nowrap;
 }
 
 .green{
-  background:#45df78
+  background:#45df78;
 }
 
 .gray{
   background:#343b3e;
-  color:#fff
+
+  color:#fff;
 }
 
 .red{
   background:#bd5454;
-  color:#fff
+
+  color:#fff;
 }
 
 input{
-  width:83px;
+  width:70px;
+
   height:27px;
+
   background:#252b2e;
+
   border:1px solid #414a4d;
+
   border-radius:7px;
+
   color:#fff;
+
   font-size:12px;
+
   font-weight:800;
-  padding:0 7px
+
+  padding:0 7px;
 }
 
 .close{
-  margin-left:auto
+  margin-left:auto;
 }
 
 .toast{
   position:absolute;
+
   z-index:20;
+
   bottom:5px;
+
   left:50%;
+
   transform:translateX(-50%);
+
   background:#202527;
+
   padding:6px 10px;
+
   border-radius:7px;
+
   font-size:9px;
+
   opacity:0;
+
   pointer-events:none;
-  white-space:nowrap
+
+  white-space:nowrap;
 }
 
 .show{
-  opacity:1
+  opacity:1;
 }
+
 </style>
 </head>
 
@@ -179,50 +249,95 @@ input{
 <div class="w" id="w">
 
   <div class="head">
+
     <span>
       <i class="dot" id="dot"></i>
-      <span id="status">СМЕНА НЕ ЗАПУЩЕНА</span>
+
+      <span id="status">
+        СМЕНА НЕ ЗАПУЩЕНА
+      </span>
     </span>
 
-    <span class="truck" id="set">🚛</span>
+    <span class="truck" id="set">
+      🚛
+    </span>
+
   </div>
+
 
   <div class="stats">
 
     <div>
-      <div class="lab">Заработано</div>
-      <div class="val money" id="sum">0 ₽</div>
+
+      <div class="lab">
+        Заработано
+      </div>
+
+      <div class="val money" id="sum">
+        0 ₽
+      </div>
+
     </div>
 
-    <div>
-      <div class="lab">Рейсов</div>
-      <div class="val" id="trips">0</div>
-    </div>
 
     <div>
-      <div class="lab">Время</div>
-      <div class="val" id="time">00:00:00</div>
+
+      <div class="lab">
+        Рейсов
+      </div>
+
+      <div class="val" id="trips">
+        0
+      </div>
+
+    </div>
+
+
+    <div>
+
+      <div class="lab">
+        Время
+      </div>
+
+      <div class="val" id="time">
+        00:00:00
+      </div>
+
     </div>
 
   </div>
 
+
   <div class="panel" id="p">
 
-    <div class="title">УПРАВЛЕНИЕ СМЕНОЙ</div>
+    <div class="title">
+      УПРАВЛЕНИЕ СМЕНОЙ
+    </div>
+
 
     <div class="row">
+
+      <!-- СБРОС САМАЯ ПЕРВАЯ КНОПКА -->
+
+      <button class="red" id="reset">
+        СБРОС
+      </button>
+
 
       <button class="green" id="start">
         ▶ СТАРТ
       </button>
 
+
       <button class="gray" id="pause">
         Ⅱ ПАУЗА
       </button>
 
+
       <button id="trip">
         + РЕЙС
       </button>
+
 
       <input
         id="price"
@@ -233,13 +348,11 @@ input{
         placeholder="₽/рейс"
       >
 
+
       <button id="save">
         OK
       </button>
 
-      <button class="red" id="reset">
-        СБРОС
-      </button>
 
       <button class="gray close" id="close">
         ×
@@ -249,6 +362,7 @@ input{
 
   </div>
 
+
   <div class="toast" id="toast"></div>
 
 </div>
@@ -256,15 +370,26 @@ input{
 
 <script>
 
-/* ВАЖНО:
-   Этот ключ оставляем v4,
-   чтобы status.html продолжал получать номер рейса.
-*/
-const KEY = "dumptruck_shift_v4";
+/* =========================================
+   ОБЩИЙ КЛЮЧ
 
+   НЕ МЕНЯТЬ!
+
+   status.html использует этот же ключ.
+========================================= */
+
+const KEY =
+  "dumptruck_shift_v4";
+
+
+/* =========================================
+   ЗАГРУЗКА ДАННЫХ
+========================================= */
 
 let s =
-  JSON.parse(localStorage.getItem(KEY) || "null")
+  JSON.parse(
+    localStorage.getItem(KEY) || "null"
+  )
   ||
   {
     price:5000,
@@ -275,33 +400,67 @@ let s =
   };
 
 
-const $ = id => document.getElementById(id);
+/* =========================================
+   КОРОТКАЯ ФУНКЦИЯ ЭЛЕМЕНТОВ
+========================================= */
 
+const $ =
+  id => document.getElementById(id);
+
+
+/* =========================================
+   СОХРАНЕНИЕ
+========================================= */
 
 function save(){
-  localStorage.setItem(KEY,JSON.stringify(s));
+
+  localStorage.setItem(
+    KEY,
+    JSON.stringify(s)
+  );
+
 }
 
+
+/* =========================================
+   ТЕКУЩЕЕ ВРЕМЯ
+========================================= */
 
 function now(){
+
   return Date.now();
+
 }
 
+
+/* =========================================
+   ПРОШЕДШЕЕ ВРЕМЯ
+========================================= */
 
 function elapsed(){
 
-  if(!s.startedAt)
+  if(!s.startedAt){
+
     return s.elapsed || 0;
+
+  }
 
   return (
     s.elapsed || 0
-  ) + (
+  )
+  +
+  (
     s.running
       ? now() - s.startedAt
       : 0
   );
+
 }
 
+
+/* =========================================
+   ФОРМАТ ДЕНЕГ
+========================================= */
 
 function fmt(n){
 
@@ -312,27 +471,45 @@ function fmt(n){
 }
 
 
+/* =========================================
+   ОБНОВЛЕНИЕ ЭКРАНА
+========================================= */
+
 function render(){
 
-  /* ЗАРАБОТОК */
+  /* СУММА */
+
   $("sum").textContent =
-    fmt(s.price * s.trips);
+    fmt(
+      s.price * s.trips
+    );
 
 
-  /* КОЛИЧЕСТВО РЕЙСОВ */
+  /* РЕЙСЫ */
+
   $("trips").textContent =
     s.trips;
 
 
   /* ВРЕМЯ */
+
   let sec =
-    Math.floor(elapsed() / 1000);
+    Math.floor(
+      elapsed() / 1000
+    );
+
 
   let h =
-    Math.floor(sec / 3600);
+    Math.floor(
+      sec / 3600
+    );
+
 
   let m =
-    Math.floor((sec % 3600) / 60);
+    Math.floor(
+      (sec % 3600) / 60
+    );
+
 
   let ss =
     sec % 60;
@@ -347,10 +524,12 @@ function render(){
 
 
   /* СТАТУС */
+
   $("status").textContent =
     s.running
       ? "СМЕНА В РАБОТЕ"
-      : (
+      :
+        (
           s.startedAt || s.elapsed
             ? "СМЕНА НА ПАУЗЕ"
             : "СМЕНА НЕ ЗАПУЩЕНА"
@@ -358,6 +537,7 @@ function render(){
 
 
   /* ИНДИКАТОР */
+
   $("dot").classList.toggle(
     "off",
     !s.running
@@ -366,85 +546,169 @@ function render(){
 }
 
 
+/* =========================================
+   ВСПЛЫВАЮЩЕЕ СООБЩЕНИЕ
+========================================= */
+
 function toast(t){
 
-  $("toast").textContent = t;
+  $("toast").textContent =
+    t;
 
-  $("toast").classList.add("show");
+  $("toast").classList.add(
+    "show"
+  );
 
   setTimeout(
-    () => $("toast").classList.remove("show"),
+    () =>
+      $("toast").classList.remove(
+        "show"
+      ),
     1100
   );
 
 }
 
 
-/* ОТКРЫТЬ УПРАВЛЕНИЕ */
+/* =========================================
+   ОТКРЫТЬ ПАНЕЛЬ
+========================================= */
 
 $("set").onclick = () => {
 
-  $("p").classList.add("on");
+  $("p").classList.add(
+    "on"
+  );
 
-  $("price").value = s.price;
+  $("price").value =
+    s.price;
 
 };
 
 
-/* ЗАКРЫТЬ УПРАВЛЕНИЕ */
+/* =========================================
+   ЗАКРЫТЬ ПАНЕЛЬ
+========================================= */
 
 $("close").onclick = () => {
 
-  $("p").classList.remove("on");
+  $("p").classList.remove(
+    "on"
+  );
 
 };
 
 
-/* СТАРТ */
+/* =========================================
+   СБРОС
+=========================================
+
+   КНОПКА САМАЯ ПЕРВАЯ СЛЕВА.
+
+   ОБНУЛЯЕТ:
+
+   сумма
+   рейсы
+   время
+
+   ОСТАНАВЛИВАЕТ СМЕНУ.
+
+   ЦЕНА РЕЙСА СОХРАНЯЕТСЯ.
+========================================= */
+
+$("reset").onclick = () => {
+
+  s = {
+
+    price:
+      s.price,
+
+    trips:
+      0,
+
+    startedAt:
+      null,
+
+    elapsed:
+      0,
+
+    running:
+      false
+
+  };
+
+
+  save();
+
+  render();
+
+  toast(
+    "Смена сброшена"
+  );
+
+};
+
+
+/* =========================================
+   СТАРТ
+========================================= */
 
 $("start").onclick = () => {
 
   if(!s.running){
 
-    s.startedAt = now();
+    s.startedAt =
+      now();
 
-    s.running = true;
+    s.running =
+      true;
 
     save();
 
     render();
 
-    toast("Смена запущена");
+    toast(
+      "Смена запущена"
+    );
 
   }
 
 };
 
 
-/* ПАУЗА */
+/* =========================================
+   ПАУЗА
+========================================= */
 
 $("pause").onclick = () => {
 
   if(s.running){
 
-    s.elapsed = elapsed();
+    s.elapsed =
+      elapsed();
 
-    s.startedAt = null;
+    s.startedAt =
+      null;
 
-    s.running = false;
+    s.running =
+      false;
 
     save();
 
     render();
 
-    toast("Смена на паузе");
+    toast(
+      "Смена на паузе"
+    );
 
   }
 
 };
 
 
-/* + РЕЙС */
+/* =========================================
+   ДОБАВИТЬ РЕЙС
+========================================= */
 
 $("trip").onclick = () => {
 
@@ -455,20 +719,26 @@ $("trip").onclick = () => {
   render();
 
   toast(
-    "+1 РЕЙС  " + fmt(s.price)
+    "+1 РЕЙС  "
+    +
+    fmt(s.price)
   );
 
 };
 
 
-/* СОХРАНИТЬ ЦЕНУ */
+/* =========================================
+   СОХРАНИТЬ ЦЕНУ
+========================================= */
 
 $("save").onclick = () => {
 
   s.price =
     Math.max(
       0,
-      Number($("price").value) || 0
+      Number(
+        $("price").value
+      ) || 0
     );
 
   save();
@@ -476,72 +746,46 @@ $("save").onclick = () => {
   render();
 
   toast(
-    "Цена: " + fmt(s.price)
+    "Цена: "
+    +
+    fmt(s.price)
   );
 
 };
 
 
-/*
-   СБРОС СМЕНЫ
+/* =========================================
+   ДВОЙНОЙ ТАП
 
-   Цена рейса НЕ меняется.
-   Обнуляются:
-   - рейсы
-   - сумма
-   - время
-   - состояние смены
-*/
+   ДОБАВЛЯЕТ 1 РЕЙС
+========================================= */
 
-$("reset").onclick = () => {
-
-  s = {
-
-    price: s.price,
-
-    trips: 0,
-
-    startedAt: null,
-
-    elapsed: 0,
-
-    running: false
-
-  };
-
-  save();
-
-  render();
-
-  toast("Смена сброшена");
-
-};
-
-
-/*
-   ДВОЙНОЙ ТАП ПО ОСНОВНОМУ ВИДЖЕТУ
-   = добавить 1 рейс
-*/
-
-let lastTap = 0;
+let lastTap =
+  0;
 
 
 $("w").addEventListener(
   "click",
-  (e) => {
+  e => {
 
     if(
-      e.target.closest("#set") ||
+      e.target.closest("#set")
+      ||
       e.target.closest("#p")
     ){
+
       return;
+
     }
 
 
-    const t = Date.now();
+    const t =
+      Date.now();
 
 
-    if(t - lastTap < 450){
+    if(
+      t - lastTap < 450
+    ){
 
       s.trips++;
 
@@ -550,24 +794,31 @@ $("w").addEventListener(
       render();
 
       toast(
-        "+1 РЕЙС  " + fmt(s.price)
+        "+1 РЕЙС  "
+        +
+        fmt(s.price)
       );
 
     }
 
 
-    lastTap = t;
+    lastTap =
+      t;
 
   }
 );
 
 
-/* ПЕРВЫЙ РЕНДЕР */
+/* =========================================
+   ПЕРВЫЙ РЕНДЕР
+========================================= */
 
 render();
 
 
-/* ОБНОВЛЯТЬ ВРЕМЯ КАЖДУЮ СЕКУНДУ */
+/* =========================================
+   ОБНОВЛЕНИЕ КАЖДУЮ СЕКУНДУ
+========================================= */
 
 setInterval(
   render,
