@@ -4,111 +4,118 @@
 <meta charset="UTF-8">
 
 <meta name="viewport"
-content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 
 <title>Статус рейса</title>
 
 <style>
 
-* {
-  box-sizing: border-box;
+*{
+  box-sizing:border-box;
 }
 
-html,
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  overflow: hidden;
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  height:100%;
+  background:transparent;
+  overflow:hidden;
 }
 
-body {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 5px;
+body{
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  padding:5px;
 }
 
-#widget {
-  position: relative;
-  width: 350px;
-  max-width: 100%;
-  aspect-ratio: 16 / 9;
-  overflow: hidden;
-  border-radius: 16px;
-  background: #111;
-  font-family: Arial, sans-serif;
-  user-select: none;
-  -webkit-user-select: none;
+#widget{
+  position:relative;
+  width:350px;
+  max-width:100%;
+  aspect-ratio:16/9;
+  overflow:hidden;
+  border-radius:16px;
+  background:#111;
+  font-family:Arial,sans-serif;
+  user-select:none;
+  -webkit-user-select:none;
 }
 
-video {
-  position: absolute;
-  inset: 0;
-
-  width: 100%;
-  height: 100%;
-
-  object-fit: cover;
-
-  background: #111;
+video{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  background:#111;
 }
 
 .top,
-.status {
-
-  position: absolute;
-  top: 8px;
-
-  z-index: 3;
-
-  padding: 5px 9px;
-
-  border-radius: 8px;
-
-  background: rgba(0,0,0,.62);
-
-  color: white;
-
-  font-size: 12px;
-
-  font-weight: 800;
-
-  letter-spacing: .4px;
-
-  text-shadow: 0 1px 2px #000;
+.status{
+  position:absolute;
+  top:8px;
+  z-index:3;
+  padding:5px 9px;
+  border-radius:8px;
+  background:rgba(0,0,0,.62);
+  color:#fff;
+  font-size:12px;
+  font-weight:800;
+  letter-spacing:.4px;
+  text-shadow:0 1px 2px #000;
 }
 
-.top {
-  left: 10px;
+.top{
+  left:10px;
 }
 
-.status {
-  right: 10px;
+.status{
+  right:10px;
 }
 
-#hint {
+#play{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  z-index:5;
 
-  position: absolute;
+  width:48px;
+  height:48px;
 
-  left: 50%;
-  bottom: 7px;
+  border-radius:50%;
+  border:2px solid rgba(255,255,255,.9);
 
-  transform: translateX(-50%);
+  background:rgba(0,0,0,.6);
 
-  z-index: 4;
+  color:#fff;
 
-  color: rgba(255,255,255,.8);
+  font-size:22px;
+  line-height:44px;
+  text-align:center;
 
-  font-size: 9px;
+  opacity:.9;
+}
 
-  white-space: nowrap;
+#hint{
+  position:absolute;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
 
-  opacity: 0;
+  z-index:4;
 
-  text-shadow: 0 1px 2px #000;
+  color:rgba(255,255,255,.8);
+
+  font-size:9px;
+
+  white-space:nowrap;
+
+  opacity:0;
+
+  text-shadow:0 1px 2px #000;
 }
 
 </style>
@@ -120,24 +127,24 @@ video {
 
   <video
     id="video"
-    autoplay
     muted
+    autoplay
     playsinline
     webkit-playsinline
-    loop
-    preload="auto">
+    preload="auto"
+    loop>
   </video>
 
-  <div
-    class="top"
-    id="trip">
+  <div class="top" id="trip">
     РЕЙС №1
   </div>
 
-  <div
-    class="status"
-    id="status">
+  <div class="status" id="status">
     ЗАГРУЗКА
+  </div>
+
+  <div id="play">
+    ▶
   </div>
 
   <div id="hint">
@@ -146,35 +153,50 @@ video {
 
 </div>
 
+
 <script>
+
+/* =========================================
+   ЭТАПЫ РЕЙСА
+========================================= */
 
 const states = [
 
   {
-    name: "ЗАГРУЗКА",
-    file: "loading.mp4"
+    name:"ЗАГРУЗКА",
+    file:"loading.mp4"
   },
 
   {
-    name: "В ПУТИ",
-    file: "full.mp4"
+    name:"В ПУТИ",
+    file:"full.mp4"
   },
 
   {
-    name: "РАЗГРУЗКА",
-    file: "unloading.mp4"
+    name:"РАЗГРУЗКА",
+    file:"unloading.mp4"
   },
 
   {
-    name: "В ПУТИ",
-    file: "empty.mp4"
+    name:"В ПУТИ",
+    file:"empty.mp4"
   }
 
 ];
 
+
+/* =========================================
+   ТЕКУЩЕЕ СОСТОЯНИЕ
+========================================= */
+
 let current = 0;
 
 let lastTap = 0;
+
+
+/* =========================================
+   ЭЛЕМЕНТЫ
+========================================= */
 
 const video =
   document.getElementById("video");
@@ -188,15 +210,27 @@ const trip =
 const status =
   document.getElementById("status");
 
+const play =
+  document.getElementById("play");
+
 const hint =
   document.getElementById("hint");
 
 
-function getTrip() {
+/* =========================================
+   НОМЕР РЕЙСА
 
-  try {
+   БЕРЁМ ТОЧНО ТО ЖЕ ЧИСЛО,
+   ЧТО И ОСНОВНОЙ ВИДЖЕТ.
 
-    const data =
+   НИКАКОГО +1 ЗДЕСЬ НЕТ.
+========================================= */
+
+function getTrip(){
+
+  try{
+
+    const d =
       JSON.parse(
         localStorage.getItem(
           "dumptruck_shift_v4"
@@ -205,10 +239,10 @@ function getTrip() {
 
     return Math.max(
       1,
-      Number(data.trips || 0) + 1
+      Number(d.trips || 0)
     );
 
-  } catch (e) {
+  }catch(e){
 
     return 1;
 
@@ -217,7 +251,11 @@ function getTrip() {
 }
 
 
-function updateTrip() {
+/* =========================================
+   ОБНОВИТЬ НОМЕР РЕЙСА
+========================================= */
+
+function updateTrip(){
 
   trip.textContent =
     "РЕЙС №" + getTrip();
@@ -225,49 +263,74 @@ function updateTrip() {
 }
 
 
-function playVideo() {
+/* =========================================
+   ЗАПУСК ВИДЕО
+========================================= */
+
+function startVideo(){
 
   const p =
     video.play();
 
-  if (p) {
+  if(p){
 
-    p.catch(function() {});
+    p.then(()=>{
+
+      play.style.display =
+        "none";
+
+    }).catch(()=>{
+
+      play.style.display =
+        "block";
+
+    });
 
   }
 
 }
 
 
-function showState(number) {
+/* =========================================
+   ПОКАЗАТЬ ЭТАП
+========================================= */
+
+function showState(i){
 
   current =
-    (number + states.length)
+    (i + states.length)
     % states.length;
 
-  const state =
+  const s =
     states[current];
 
   status.textContent =
-    state.name;
+    s.name;
 
   video.pause();
 
-  video.loop = true;
-
   video.src =
-    state.file;
+    s.file;
 
-  video.currentTime = 0;
+  video.loop = true;
 
   video.load();
 
-  playVideo();
+  video.currentTime = 0;
+
+  play.style.display =
+    "block";
+
+  startVideo();
 
 }
 
 
-function nextState() {
+/* =========================================
+   СЛЕДУЮЩИЙ ЭТАП
+========================================= */
+
+function nextState(){
 
   showState(
     current + 1
@@ -276,79 +339,116 @@ function nextState() {
   hint.style.opacity =
     "1";
 
-  setTimeout(function() {
+  setTimeout(()=>{
 
     hint.style.opacity =
       "0";
 
-  }, 900);
+  },900);
 
 }
 
 
-function handleTap() {
+/* =========================================
+   ДВОЙНОЙ ТАП
+========================================= */
+
+function tap(){
 
   const now =
     Date.now();
 
-  if (
+  if(
     now - lastTap < 450
-  ) {
+  ){
 
     lastTap = 0;
 
     nextState();
 
-  } else {
+  }else{
 
     lastTap = now;
+
+    if(video.paused){
+
+      startVideo();
+
+    }
+
+    setTimeout(()=>{
+
+      if(
+        Date.now() - lastTap > 450
+      ){
+
+        lastTap = 0;
+
+      }
+
+    },500);
 
   }
 
 }
 
 
+/* =========================================
+   НАЖАТИЕ
+========================================= */
+
 widget.addEventListener(
   "click",
-  handleTap
+  tap
 );
 
 
+/* =========================================
+   TOUCH ДЛЯ MOBLIN / IPHONE
+========================================= */
+
 widget.addEventListener(
   "touchend",
-  function(e) {
+  e => {
 
     e.preventDefault();
 
-    handleTap();
+    tap();
 
   },
   {
-    passive: false
+    passive:false
   }
 );
 
 
-/*
-  На некоторых WebView видео может
-  остановиться после потери фокуса.
-  Проверяем состояние и снова запускаем
-  только если оно действительно остановилось.
-*/
+/* =========================================
+   ВИДЕО НАЧАЛО ИГРАТЬ
+========================================= */
+
+video.addEventListener(
+  "playing",
+  () => {
+
+    play.style.display =
+      "none";
+
+  }
+);
+
+
+/* =========================================
+   ВИДЕО ПОСТАВИЛОСЬ НА ПАУЗУ
+========================================= */
 
 video.addEventListener(
   "pause",
-  function() {
+  () => {
 
-    if (
-      !document.hidden &&
-      !video.ended
-    ) {
+    if(!video.ended){
 
-      setTimeout(
-        playVideo,
-        100
-      );
+      play.style.display =
+        "block";
 
     }
 
@@ -356,28 +456,52 @@ video.addEventListener(
 );
 
 
+/* =========================================
+   ВИДЕО ЗАКОНЧИЛОСЬ
+========================================= */
+
 video.addEventListener(
   "ended",
-  function() {
+  () => {
 
-    video.currentTime = 0;
+    play.style.display =
+      "block";
 
-    playVideo();
+    startVideo();
 
   }
 );
 
+
+/* =========================================
+   ПЕРВЫЙ ЗАПУСК
+========================================= */
 
 updateTrip();
 
 showState(0);
 
 
+/* =========================================
+   ПРОВЕРЯЕМ НОМЕР КАЖДУЮ СЕКУНДУ
+
+   ПОЭТОМУ ЕСЛИ В ОСНОВНОМ
+   ВИДЖЕТЕ БЫЛО:
+
+   3 → СТАНЕТ 3
+   4 → СТАНЕТ 4
+   СБРОС → СТАНЕТ 1
+========================================= */
+
 setInterval(
   updateTrip,
   1000
 );
 
+
+/* =========================================
+   ЕСЛИ LOCALSTORAGE ИЗМЕНИЛСЯ
+========================================= */
 
 window.addEventListener(
   "storage",
