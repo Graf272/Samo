@@ -109,8 +109,7 @@ html,body{
 
 .row{
   display:flex;
-  gap:5px;
-  align-items:center
+  gap:5px
 }
 
 button{
@@ -139,7 +138,7 @@ button{
 }
 
 input{
-  width:70px;
+  width:83px;
   height:27px;
   background:#252b2e;
   border:1px solid #414a4d;
@@ -239,7 +238,7 @@ input{
       </button>
 
       <button class="red" id="reset">
-        НОВАЯ
+        СБРОС
       </button>
 
       <button class="gray close" id="close">
@@ -257,13 +256,17 @@ input{
 
 <script>
 
+/* ВАЖНО:
+   Этот ключ оставляем v4,
+   чтобы status.html продолжал получать номер рейса.
+*/
 const KEY = "dumptruck_shift_v4";
 
-let s = JSON.parse(localStorage.getItem(KEY) || "null");
 
-if(!s){
-
-  s = {
+let s =
+  JSON.parse(localStorage.getItem(KEY) || "null")
+  ||
+  {
     price:5000,
     trips:0,
     startedAt:null,
@@ -271,112 +274,115 @@ if(!s){
     running:false
   };
 
-  localStorage.setItem(KEY,JSON.stringify(s));
-}
 
 const $ = id => document.getElementById(id);
 
 
 function save(){
-
   localStorage.setItem(KEY,JSON.stringify(s));
-
 }
 
 
-function getElapsed(){
+function now(){
+  return Date.now();
+}
 
-  if(!s.startedAt){
 
+function elapsed(){
+
+  if(!s.startedAt)
     return s.elapsed || 0;
 
-  }
-
-  if(s.running){
-
-    return (s.elapsed || 0) + (Date.now() - s.startedAt);
-
-  }
-
-  return s.elapsed || 0;
-
+  return (
+    s.elapsed || 0
+  ) + (
+    s.running
+      ? now() - s.startedAt
+      : 0
+  );
 }
 
 
-function formatMoney(n){
+function fmt(n){
 
-  return Math.round(n).toLocaleString("ru-RU") + " ₽";
+  return Math.round(n)
+    .toLocaleString("ru-RU")
+    + " ₽";
 
 }
 
 
 function render(){
 
-  const total = s.price * s.trips;
-
-  $("sum").textContent = formatMoney(total);
-
-  $("trips").textContent = s.trips;
+  /* ЗАРАБОТОК */
+  $("sum").textContent =
+    fmt(s.price * s.trips);
 
 
-  const seconds = Math.floor(getElapsed()/1000);
+  /* КОЛИЧЕСТВО РЕЙСОВ */
+  $("trips").textContent =
+    s.trips;
 
-  const hours = Math.floor(seconds/3600);
 
-  const minutes = Math.floor((seconds%3600)/60);
+  /* ВРЕМЯ */
+  let sec =
+    Math.floor(elapsed() / 1000);
 
-  const secs = seconds % 60;
+  let h =
+    Math.floor(sec / 3600);
+
+  let m =
+    Math.floor((sec % 3600) / 60);
+
+  let ss =
+    sec % 60;
 
 
   $("time").textContent =
-    String(hours).padStart(2,"0") +
-    ":" +
-    String(minutes).padStart(2,"0") +
-    ":" +
-    String(secs).padStart(2,"0");
+    String(h).padStart(2,"0")
+    + ":"
+    + String(m).padStart(2,"0")
+    + ":"
+    + String(ss).padStart(2,"0");
 
 
-  if(s.running){
+  /* СТАТУС */
+  $("status").textContent =
+    s.running
+      ? "СМЕНА В РАБОТЕ"
+      : (
+          s.startedAt || s.elapsed
+            ? "СМЕНА НА ПАУЗЕ"
+            : "СМЕНА НЕ ЗАПУЩЕНА"
+        );
 
-    $("status").textContent = "СМЕНА В РАБОТЕ";
 
-    $("dot").classList.remove("off");
-
-  }else if(s.startedAt || s.elapsed){
-
-    $("status").textContent = "СМЕНА НА ПАУЗЕ";
-
-    $("dot").classList.add("off");
-
-  }else{
-
-    $("status").textContent = "СМЕНА НЕ ЗАПУЩЕНА";
-
-    $("dot").classList.add("off");
-
-  }
+  /* ИНДИКАТОР */
+  $("dot").classList.toggle(
+    "off",
+    !s.running
+  );
 
 }
 
 
-function toast(text){
+function toast(t){
 
-  $("toast").textContent = text;
+  $("toast").textContent = t;
 
   $("toast").classList.add("show");
 
-  setTimeout(function(){
-
-    $("toast").classList.remove("show");
-
-  },1100);
+  setTimeout(
+    () => $("toast").classList.remove("show"),
+    1100
+  );
 
 }
 
 
-/* Открыть управление */
+/* ОТКРЫТЬ УПРАВЛЕНИЕ */
 
-$("set").onclick = function(){
+$("set").onclick = () => {
 
   $("p").classList.add("on");
 
@@ -385,9 +391,9 @@ $("set").onclick = function(){
 };
 
 
-/* Закрыть управление */
+/* ЗАКРЫТЬ УПРАВЛЕНИЕ */
 
-$("close").onclick = function(){
+$("close").onclick = () => {
 
   $("p").classList.remove("on");
 
@@ -396,11 +402,11 @@ $("close").onclick = function(){
 
 /* СТАРТ */
 
-$("start").onclick = function(){
+$("start").onclick = () => {
 
   if(!s.running){
 
-    s.startedAt = Date.now();
+    s.startedAt = now();
 
     s.running = true;
 
@@ -408,7 +414,7 @@ $("start").onclick = function(){
 
     render();
 
-    toast("СМЕНА ЗАПУЩЕНА");
+    toast("Смена запущена");
 
   }
 
@@ -417,11 +423,11 @@ $("start").onclick = function(){
 
 /* ПАУЗА */
 
-$("pause").onclick = function(){
+$("pause").onclick = () => {
 
   if(s.running){
 
-    s.elapsed = getElapsed();
+    s.elapsed = elapsed();
 
     s.startedAt = null;
 
@@ -431,16 +437,16 @@ $("pause").onclick = function(){
 
     render();
 
-    toast("СМЕНА НА ПАУЗЕ");
+    toast("Смена на паузе");
 
   }
 
 };
 
 
-/* ДОБАВИТЬ РЕЙС */
+/* + РЕЙС */
 
-$("trip").onclick = function(){
+$("trip").onclick = () => {
 
   s.trips++;
 
@@ -448,104 +454,125 @@ $("trip").onclick = function(){
 
   render();
 
-  toast("+1 РЕЙС  " + formatMoney(s.price));
+  toast(
+    "+1 РЕЙС  " + fmt(s.price)
+  );
 
 };
 
 
-/* Сохранить цену */
+/* СОХРАНИТЬ ЦЕНУ */
 
-$("save").onclick = function(){
+$("save").onclick = () => {
 
-  const value = Number($("price").value);
-
-  if(!isNaN(value) && value >= 0){
-
-    s.price = value;
-
-  }
+  s.price =
+    Math.max(
+      0,
+      Number($("price").value) || 0
+    );
 
   save();
 
   render();
 
-  toast("ЦЕНА: " + formatMoney(s.price));
+  toast(
+    "Цена: " + fmt(s.price)
+  );
 
 };
 
 
-/* НОВАЯ СМЕНА */
+/*
+   СБРОС СМЕНЫ
 
-$("reset").onclick = function(){
+   Цена рейса НЕ меняется.
+   Обнуляются:
+   - рейсы
+   - сумма
+   - время
+   - состояние смены
+*/
 
-  const ok = confirm(
-    "Начать новую смену?\n\n" +
-    "Рейсы, заработок и время будут сброшены."
-  );
-
-  if(!ok) return;
-
+$("reset").onclick = () => {
 
   s = {
 
-    price:s.price,
+    price: s.price,
 
-    trips:0,
+    trips: 0,
 
-    startedAt:null,
+    startedAt: null,
 
-    elapsed:0,
+    elapsed: 0,
 
-    running:false
+    running: false
 
   };
-
 
   save();
 
   render();
 
-  toast("НОВАЯ СМЕНА");
+  toast("Смена сброшена");
 
 };
 
 
-/* Двойной тап по основному виджету = добавить 1 рейс */
+/*
+   ДВОЙНОЙ ТАП ПО ОСНОВНОМУ ВИДЖЕТУ
+   = добавить 1 рейс
+*/
 
 let lastTap = 0;
 
-$("w").addEventListener("click", function(e){
 
-  if(e.target.closest("#set") || e.target.closest("#p")){
+$("w").addEventListener(
+  "click",
+  (e) => {
 
-    return;
+    if(
+      e.target.closest("#set") ||
+      e.target.closest("#p")
+    ){
+      return;
+    }
+
+
+    const t = Date.now();
+
+
+    if(t - lastTap < 450){
+
+      s.trips++;
+
+      save();
+
+      render();
+
+      toast(
+        "+1 РЕЙС  " + fmt(s.price)
+      );
+
+    }
+
+
+    lastTap = t;
 
   }
-
-  const t = Date.now();
-
-  if(t - lastTap < 450){
-
-    s.trips++;
-
-    save();
-
-    render();
-
-    toast("+1 РЕЙС  " + formatMoney(s.price));
-
-  }
-
-  lastTap = t;
-
-});
+);
 
 
-/* Обновляем время каждую секунду */
+/* ПЕРВЫЙ РЕНДЕР */
 
 render();
 
-setInterval(render,1000);
+
+/* ОБНОВЛЯТЬ ВРЕМЯ КАЖДУЮ СЕКУНДУ */
+
+setInterval(
+  render,
+  1000
+);
 
 </script>
 
