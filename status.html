@@ -33,29 +33,20 @@ body {
 
 #widget {
   position: relative;
-
   width: 350px;
   max-width: 100%;
-
   aspect-ratio: 16 / 9;
-
   overflow: hidden;
-
   border-radius: 16px;
-
   background: #111;
-
   font-family: Arial, sans-serif;
-
   user-select: none;
   -webkit-user-select: none;
 }
 
 video {
   position: absolute;
-
-  left: 0;
-  top: 0;
+  inset: 0;
 
   width: 100%;
   height: 100%;
@@ -69,7 +60,6 @@ video {
 .status {
 
   position: absolute;
-
   top: 8px;
 
   z-index: 3;
@@ -97,35 +87,6 @@ video {
 
 .status {
   right: 10px;
-}
-
-#play {
-
-  position: absolute;
-
-  left: 50%;
-  top: 50%;
-
-  transform: translate(-50%, -50%);
-
-  z-index: 5;
-
-  width: 48px;
-  height: 48px;
-
-  border-radius: 50%;
-
-  border: 2px solid rgba(255,255,255,.9);
-
-  background: rgba(0,0,0,.65);
-
-  color: white;
-
-  font-size: 22px;
-
-  line-height: 44px;
-
-  text-align: center;
 }
 
 #hint {
@@ -159,9 +120,11 @@ video {
 
   <video
     id="video"
+    autoplay
     muted
     playsinline
     webkit-playsinline
+    loop
     preload="auto">
   </video>
 
@@ -175,10 +138,6 @@ video {
     class="status"
     id="status">
     ЗАГРУЗКА
-  </div>
-
-  <div id="play">
-    ▶
   </div>
 
   <div id="hint">
@@ -229,9 +188,6 @@ const trip =
 const status =
   document.getElementById("status");
 
-const play =
-  document.getElementById("play");
-
 const hint =
   document.getElementById("hint");
 
@@ -269,24 +225,14 @@ function updateTrip() {
 }
 
 
-function startVideo() {
+function playVideo() {
 
-  const promise =
+  const p =
     video.play();
 
-  if (promise) {
+  if (p) {
 
-    promise
-      .then(function() {
-
-        play.style.display = "none";
-
-      })
-      .catch(function() {
-
-        play.style.display = "block";
-
-      });
+    p.catch(function() {});
 
   }
 
@@ -307,17 +253,16 @@ function showState(number) {
 
   video.pause();
 
+  video.loop = true;
+
   video.src =
     state.file;
 
-  video.load();
-
   video.currentTime = 0;
 
-  play.style.display =
-    "block";
+  video.load();
 
-  startVideo();
+  playVideo();
 
 }
 
@@ -354,15 +299,9 @@ function handleTap() {
 
     nextState();
 
-    return;
+  } else {
 
-  }
-
-  lastTap = now;
-
-  if (video.paused) {
-
-    startVideo();
+    lastTap = now;
 
   }
 
@@ -390,25 +329,26 @@ widget.addEventListener(
 );
 
 
-video.addEventListener(
-  "playing",
-  function() {
-
-    play.style.display =
-      "none";
-
-  }
-);
-
+/*
+  На некоторых WebView видео может
+  остановиться после потери фокуса.
+  Проверяем состояние и снова запускаем
+  только если оно действительно остановилось.
+*/
 
 video.addEventListener(
   "pause",
   function() {
 
-    if (!video.ended) {
+    if (
+      !document.hidden &&
+      !video.ended
+    ) {
 
-      play.style.display =
-        "block";
+      setTimeout(
+        playVideo,
+        100
+      );
 
     }
 
@@ -420,8 +360,9 @@ video.addEventListener(
   "ended",
   function() {
 
-    play.style.display =
-      "block";
+    video.currentTime = 0;
+
+    playVideo();
 
   }
 );
